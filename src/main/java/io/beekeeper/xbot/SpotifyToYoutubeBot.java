@@ -84,10 +84,6 @@ public class SpotifyToYoutubeBot extends ChatBot{
                     .setApplicationName(config.getAppName())
                     .build();
 
-            ClientCredentials creds = spotifyApi.clientCredentials().build().execute();
-            log.info(creds.getAccessToken());
-            spotifyApi.setAccessToken(creds.getAccessToken());
-
             youtubeSearch =  youtubeApi.search().list("id,snippet");
             youtubeSearch.setType("video");
             youtubeSearch.setKey(config.getYoutubeApiKey());
@@ -102,6 +98,17 @@ public class SpotifyToYoutubeBot extends ChatBot{
 
         log.info("Bot started");
 
+    }
+
+    private void authorizeWithSpotify() {
+        try {
+            ClientCredentials creds = spotifyApi.clientCredentials().build().execute();
+            log.info("Got new Spotify access token: {}", creds.getAccessToken());
+            spotifyApi.setAccessToken(creds.getAccessToken());
+        }
+        catch (IOException | SpotifyWebApiException e) {
+            log.error("Could not authorize with Spotify", e);
+        }
     }
 
     @Override
@@ -119,6 +126,8 @@ public class SpotifyToYoutubeBot extends ChatBot{
             }
             if (message.getText().toLowerCase().matches(spotifyLinkRegexp)) {
                 log.info(message.getText());
+
+                authorizeWithSpotify();
 
                 Matcher trackIdMatcher = spotifyTrackIdPattern.matcher(message.getText());
 
