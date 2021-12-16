@@ -15,13 +15,7 @@ applicationDefaultJvmArgs = ["-Xms64M", "-Xmx128M"]
 sourceCompatibility = 1.11
 
 repositories {
-    maven {
-        url 'https://nexus.internal.beekeeper.io/repository/beekeeper-maven-central/'
-        credentials {
-            username = (System.getenv('NEXUS_USERNAME') ?: ${NEXUS_USERNAME})
-            password = (System.getenv('NEXUS_PASSWORD') ?: ${NEXUS_PASSWORD})
-        }
-    }
+    mavenCentral()
     maven { url 'https://s3-eu-west-1.amazonaws.com/beekeeper-marketplace-sdk/maven2/release/' }
 }
 
